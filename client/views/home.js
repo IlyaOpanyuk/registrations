@@ -2,6 +2,7 @@ import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { Row, Col, Form, FormGroup, FormControl, ControlLabel, HelpBlock, Button } from 'react-bootstrap';
 import Alert from 'react-alert';
+import './home.scss';
 
 class Home extends React.Component {
     constructor(props){

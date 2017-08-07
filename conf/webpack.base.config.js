@@ -8,20 +8,24 @@ export default new Config().merge({
     path: __dirname + '/../public',
   },
   module: {
-    loaders: [
+    rules: [
       {
         test: /.jsx?$/,
         loader: 'babel-loader',
         exclude: /node_modules/,
       },
       {
-        test: /\.scss$/,
-        loader: ExtractTextPlugin.extract('style-loader', 'css-loader!resolve-url!sass-loader?sourceMap')
+        test: /\.(sass|scss)$/,
+        loader: ExtractTextPlugin.extract('css-loader', 'sass-loader')
       },
       {
         test: /\.css$/,
         loader: ExtractTextPlugin.extract('style-loader', 'css-loader')
       },
+      {
+        test: /\.woff2?$|\.ttf$|\.eot$|\.svg$|\.png|\.jpe?g|\.gif$/,
+        loader: 'file-loader'
+      }
     ]
   },
   plugins: [
@@ -29,7 +33,7 @@ export default new Config().merge({
       template: './client/index.html',
       inject: "body"
     }),
-    new ExtractTextPlugin('styles.css', {
-            allChunks: true
+    new ExtractTextPlugin('/client/styles.css', {
+      allChunks: true
     })]
 });
