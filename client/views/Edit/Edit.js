@@ -1,6 +1,7 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
-import { Grid, Row, Col, Form, FormGroup, FormControl, ControlLabel, Button } from 'react-bootstrap';
+import { Grid, Row, Col, Form, FormGroup, FormControl, ControlLabel, Button, Checkbox, ButtonToolbar } from 'react-bootstrap';
+import DatePicker from 'react-bootstrap-date-picker'
 import valid from '../../constants/valid';
 import './edit.scss';
 
@@ -13,10 +14,10 @@ class Edit extends React.Component{
             patronymic: '',
             series: '',
             pasportNumber: '',
-            issueDate: new Date(),
+            issueDate: new Date().toISOString(),
             phoneNumber: '',
             attestation: false,
-            block: new Date(),
+            blockDate: new Date().toISOString(),
             issuedBy: '',
             surnameValid: valid.default,
             nameValid: valid.default,
@@ -27,12 +28,39 @@ class Edit extends React.Component{
             error: null
         };
 
+        this.handleFormOnChange = this.handleFormOnChange.bind(this);
+        this.handleSaveOnClick = this.handleSaveOnClick.bind(this);
+        this.handleBlockDateOnChange = this.handleBlockDateOnChange.bind(this);
+        this.handleIssuedDateOnChange = this.handleIssuedDateOnChange.bind(this);
+    }
+
+    handleFormOnChange(e){
+        this.setState({
+            [e.target.id]: e.target.value
+        });
+    }
+
+    handleSaveOnClick(e){
+        alert(this.state.blockDate);
+    }
+
+    handleBlockDateOnChange(value){
+        this.setState({
+            blockDate: value
+        })
+    } 
+
+    handleIssuedDateOnChange(value){
+        this.setState({
+            issueDate: value
+        })
     }
 
     render(){
         return(
             <Grid>
-                <Form>
+                <h2>Редактирование данных</h2>
+                <Form onChange={ this.handleFormOnChange }>
                     <Row>
                         <Col md={6} sm={3}>
                             <FormGroup controlId="surname" validationState={ this.state.surnameValid }>
@@ -50,7 +78,7 @@ class Edit extends React.Component{
                             <FormGroup controlId="series" validationState={ this.state.seriesValid }>
                                 <ControlLabel>Серия</ControlLabel>
                                 <FormControl componentClass="select" placeholder="Выберите серию паспорта">
-                                    <option value="AB" selected>AB</option>
+                                    <option value="AB">AB</option>
                                     <option value="BM">BM</option>
                                     <option value="HB">HB</option>
                                     <option value="KH">KH</option>
@@ -64,29 +92,39 @@ class Edit extends React.Component{
                                 <ControlLabel>Номер паспорта</ControlLabel>
                                 <FormControl type="text" placeholder="Введите номер паспорта"/>
                             </FormGroup>
-                            <FormGroup controlId="issueDate">
-                                <ControlLabel>Дата выдачи</ControlLabel>
-                                <FormControl type="text" placeholder="Введите дату выдачи"/>
+                            <FormGroup>
+                                <Col sm={9}>
+                                    <p className="error">{ this.state.error }</p>
+                                </Col>
                             </FormGroup>
                         </Col>
                         <Col md={6} sm={3}>
+                            <FormGroup controlId="issueDate">
+                                <ControlLabel>Дата выдачи</ControlLabel>
+                                <DatePicker value={ this.state.issueDate } onChange={ this.handleIssuedDateOnChange }/>
+                            </FormGroup>
                             <FormGroup controlId="phoneNumber" validationState={ this.state.phoneNumberValid }>
                                 <ControlLabel>Номер телефона</ControlLabel>
                                 <FormControl type="text" placeholder="Введите номер телефона"/>
                             </FormGroup>
                             <FormGroup controlId="attestation">
                                 <ControlLabel>Аттестация</ControlLabel>
-                                <Checkbox>
+                                <Checkbox>  
+                                    { this.props.date ? this.props.date : new Date().toLocaleDateString() }
                                 </Checkbox>
                             </FormGroup>
-                            <FormGroup controlId="block">
+                            <FormGroup controlId="blockDate" className="checkboxMargin" >
                                 <ControlLabel>Блокировка доступа</ControlLabel>
-                                <FormControl type="text"/>
+                                <DatePicker value={ this.state.blockDate } onChange={ this.handleBlockDateOnChange }/>
                             </FormGroup>
                             <FormGroup controlId="issuedBy" validationState={ this.state.issuedByValid }>
                                 <ControlLabel>Кем выдан</ControlLabel>
                                 <FormControl type="text" placeholder="Введите организацию, выдавшую документ"/>
                             </FormGroup>
+                            <ButtonToolbar className="pull-right">
+                                <Button bsStyle="success" className="searchButton" onClick={ this.handleSaveOnClick }>Сохранить</Button>
+                                <Button bsStyle="danger" className="searchButton">Отмена</Button>
+                            </ButtonToolbar>
                         </Col>
                     </Row>  
                 </Form>

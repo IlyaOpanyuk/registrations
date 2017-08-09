@@ -1,11 +1,10 @@
 import Config from 'webpack-config';
-import HtmlWebpackPlugin from 'html-webpack-plugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 
 export default new Config().merge({
   entry: './client/index.js',
   output: {
-    path: __dirname + '/../public',
+    path: __dirname + '/../server/public',
   },
   module: {
     rules: [
@@ -16,7 +15,7 @@ export default new Config().merge({
       },
       {
         test: /\.(sass|scss)$/,
-        loader: ExtractTextPlugin.extract('css-loader', 'sass-loader')
+        loader: ExtractTextPlugin.extract(['css-loader', 'sass-loader'])
       },
       {
         test: /\.css$/,
@@ -24,16 +23,13 @@ export default new Config().merge({
       },
       {
         test: /\.woff2?$|\.ttf$|\.eot$|\.svg$|\.png|\.jpe?g|\.gif$/,
-        loader: 'file-loader'
+        loader: 'url-loader?file-loader'
       }
     ]
   },
   plugins: [
-    new HtmlWebpackPlugin({
-      template: './client/index.html',
-      inject: "body"
-    }),
-    new ExtractTextPlugin('/client/styles.css', {
+    new ExtractTextPlugin('./bundle.css', {
       allChunks: true
-    })]
+    })
+  ]
 });

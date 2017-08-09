@@ -4,8 +4,8 @@
   "description": "app for create registrations",
   "main": "app.js",
   "scripts": {
-    "build-dev": "set NODE_ENV=development&& babel-node server.js",
-    "build-prod": "set NODE_ENV=production&& webpack && babel-node server.js"
+    "build-dev": "set NODE_ENV=development&& babel-node server/index.js",
+    "build-prod": "set NODE_ENV=production&& webpack -p && babel-node server/index.js"
   },
   "repository": {
     "type": "git",
@@ -29,12 +29,16 @@
     "bootstrap-sass": "^3.3.7",
     "css-loader": "^0.28.4",
     "extract-text-webpack-plugin": "^3.0.0",
+    "font-awesome": "^4.7.0",
+    "font-awesome-sass": "^4.7.0",
     "html-webpack-plugin": "^2.29.0",
     "react-alert": "^2.2.0",
+    "react-bootstrap-date-picker": "^5.1.0",
     "react-hot-loader": "^3.0.0-beta.7",
     "resolve-url-loader": "^2.1.0",
     "sass-loader": "^6.0.6",
     "style-loader": "^0.18.2",
+    "url-loader": "^0.5.9",
     "webpack": "^3.3.0",
     "webpack-config": "^7.0.0",
     "webpack-dev-middleware": "^1.11.0",

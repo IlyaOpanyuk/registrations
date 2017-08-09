@@ -1,0 +1,53 @@
+{
+    "m:properties": {
+        "d:ИдентификаторТипаКонтента":"0x0100D2F1A1D00318FB47A9E5E5234207C0F1",
+        "d:Название":"SportRegistration",
+        "d:StartDate":{
+            "@m:type":"Edm.DateTime",
+            "#text":"2017-05-01T00:00:00"
+        },
+        "d:FinishDate":{
+            "@m:type":"Edm.DateTime",
+            "#text":"2017-05-31T00:00:00"
+        },
+        "d:EmailOK":"Зарегистрировался",
+        "d:EmailWait":"Подождешь",
+        "d:MultiReg":{
+            "@m:type":"Edm.Boolean",
+            "#text":"false"
+        },
+        "d:MaxParticipantCount":{
+            "@m:type":"Edm.Int32",
+            "#text":"2"
+        },
+        "d:Идентификатор":{
+            "@m:type":"Edm.Int32",
+            "#text":"1"
+        },
+        "d:ТипКонтента":"Элемент",
+        "d:Изменен":{
+            "@m:type":"Edm.DateTime",
+            "#text":"2017-05-16T14:02:44"
+        },
+        "d:Создан":
+        {
+            "@m:type":"Edm.DateTime",
+            "#text":"2017-05-16T14:02:44"
+        },
+        "d:КемСозданоId":{
+            "@m:type":"Edm.Int32",
+            "#text":"707"
+        },
+        "d:КемИзмененоId":{
+            "@m:type":"Edm.Int32",
+            "#text":"707"
+            },
+        "d:Owshiddenversion":{
+            "@m:type":"Edm.Int32",
+            "#text":"1"
+        },
+        "d:Версия":"1.0",
+        "d:Путь":"/hr/Lists/ADMIN_LIST"
+    }
+}
+    

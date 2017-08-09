@@ -5,22 +5,9 @@ import Routes from './routes/Routes';
 import { BrowserRouter as Router } from 'react-router-dom';
 import './styles/index.scss';
 
-const render = (Component) => {
-  ReactDOM.render(
-    <AppContainer>
-      <Router>
-        <Component />
-      </Router>
-    </AppContainer>,
-    document.querySelector("#app")
-  )
-}
-
-render(Routes);
-
-/*if (module.hot) {
-  module.hot.accept('./routes/Routes', () => {
-    require('./routes/Routes');
-    render(AppRouter);
-  });
-}*/
+ReactDOM.render(
+  <Router>
+    <Routes />
+  </Router>,
+  document.querySelector("#app")
+);

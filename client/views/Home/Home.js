@@ -22,14 +22,14 @@ class Home extends React.Component {
             error: null
         };
 
-        this.handleOnChange = this.handleOnChange.bind(this);
+        this.handleFormOnChange = this.handleFormOnChange.bind(this);
         this.handleSearhOnClick = this.handleSearhOnClick.bind(this);
         this.validate = this.validate.bind(this);
         this.validateControl = this.validateControl.bind(this);
         this.handlePersonalNumberOnChange = this.handlePersonalNumberOnChange.bind(this);
     }
 
-    handleOnChange(e){
+    handleFormOnChange(e){
         this.setState({
             [e.target.id]: e.target.value
         });
@@ -87,7 +87,7 @@ class Home extends React.Component {
         return(
             <Grid>
                 <h2>Форма поиска</h2>
-                <Form onChange={this.handleOnChange}>
+                <Form onChange={this.handleFormOnChange}>
                     <Row>
                         <Col md={6} sm={3}>
                             <FormGroup controlId="surname" validationState={ this.state.surnameValid }>
@@ -102,7 +102,7 @@ class Home extends React.Component {
                                 <ControlLabel>Код точки (ППО)</ControlLabel>
                                 <FormControl type="text" placeholder="Введите код точки (ППО)"/>
                             </FormGroup>
-                            <FormGroup className="error">
+                            <FormGroup>
                                 <Col sm={9}>
                                     <p>{ this.state.error }</p>
                                 </Col>

@@ -10,5 +10,9 @@ export default new Config().extend('conf/webpack.base.config.js').merge({
       compress: {
         warnings: true
       }
+    }),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendor',            
+      filename: '[name].bundle.js',        
     })]
 });
