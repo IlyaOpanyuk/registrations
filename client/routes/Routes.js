@@ -24,7 +24,7 @@ export default class Routes extends React.Component{
   render(){
     return (
       <Switch>
-        <Route exact name="main" path="/" render={() => <Home getDealer={this.getDealer} />} />
+        <Route exact name="main" path="/" render={() => <Home getDealer={ this.getDealer } />} />
         <Route name="edit" path="/edit/:id" component={Edit} />
         <Route name="employees" path="/employees" render={() => <Employees dealers={ this.state.data }/>}/>
       </Switch>

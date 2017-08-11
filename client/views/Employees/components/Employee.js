@@ -2,6 +2,8 @@ import React from 'react';
 import { Redirect, withRouter } from 'react-router-dom';
 import { Grid, Row, Col, Form, FormGroup, FormControl, ControlLabel, Button } from 'react-bootstrap';
 
+import valid from '../../../constants/valid';
+
 class Employee extends React.Component{
     constructor(props){
         super(props);
@@ -22,7 +24,7 @@ class Employee extends React.Component{
         const { redirect } = this.state;
         if (redirect) {
             return <Redirect to={{
-                pathname: '/edit/' + 4//this.props.id
+                pathname: '/edit/' + this.props.id
             }} push />
         }
         
@@ -53,7 +55,7 @@ class Employee extends React.Component{
                             </FormGroup>
                             <FormGroup>
                                 <ControlLabel>Дата рождения</ControlLabel>
-                                <FormControl componentClass="label">{ this.props.birthDate }</FormControl>
+                                <FormControl componentClass="label">{ new Date(this.props.birthDate).toLocaleDateString() }</FormControl>
                             </FormGroup>
                             <FormGroup>
                                 <ControlLabel>Тип документа</ControlLabel>
@@ -63,7 +65,7 @@ class Employee extends React.Component{
                         <Col sm={6}>
                             <FormGroup>
                                 <ControlLabel>Дата выдачи</ControlLabel>
-                                <FormControl componentClass="label">{ this.props.issueDate }</FormControl>
+                                <FormControl componentClass="label">{ new Date(this.props.issueDate).toLocaleDateString() }</FormControl>
                             </FormGroup>
                             <FormGroup>
                                 <ControlLabel>Кем выдан</ControlLabel>
@@ -87,7 +89,7 @@ class Employee extends React.Component{
                             </FormGroup>
                             <FormGroup>
                                 <ControlLabel>Блокировка доступа</ControlLabel>
-                                <FormControl componentClass="label">{ this.props.blockDate }</FormControl>
+                                <FormControl componentClass="label">{ this.props.blockDate ? new Date(this.props.blockDate).toLocaleDateString() : '-' }</FormControl>
                             </FormGroup>
                             <FormGroup>
                                 <Button bsStyle="info" className="pull-right" onClick={ this.handleEditOnClick }>Редактировать</Button>

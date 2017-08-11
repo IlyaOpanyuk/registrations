@@ -3,6 +3,7 @@ import { withRouter, Redirect } from 'react-router-dom';
 import { Grid, Row, Col, Form, FormGroup, FormControl, ControlLabel, Button, Checkbox, ButtonToolbar } from 'react-bootstrap';
 import DatePicker from 'react-bootstrap-date-picker'
 import valid from '../../constants/valid';
+import axios from 'axios';
 import './edit.scss';
 
 class Edit extends React.Component{
@@ -25,14 +26,37 @@ class Edit extends React.Component{
             documentNumberValid: valid.default,
             phoneNumberValid: valid.default,
             issuedByValid: valid.default,
-            error: null
+            error: null,
+            successRedirect: false,
+            cancelRedirect: false
         };
 
         this.handleFormOnChange = this.handleFormOnChange.bind(this);
         this.handleSaveOnClick = this.handleSaveOnClick.bind(this);
         this.handleBlockDateOnChange = this.handleBlockDateOnChange.bind(this);
         this.handleIssuedDateOnChange = this.handleIssuedDateOnChange.bind(this);
-        alert(this.props.match.params.id);
+        this.handleCancelOnClick = this.handleCancelOnClick.bind(this);
+    }
+
+    componentDidMount(){
+        axios.get('http://10.254.5.71:8084/api/dealers/' + this.props.match.params.id)
+            .then((answ) => {
+                this.setState({
+                    surname: answ.data.surname,
+                    name: answ.data.name,
+                    patronymic: answ.data.patronymic,
+                    series: answ.data.series,
+                    documentNumber: answ.data.documentNumber,
+                    issueDate: answ.data.issueDate,
+                    phoneNumber: answ.data.phoneNumber,
+                    attestation: answ.data.attestation,
+                    blockDate: answ.data.blockDate,
+                    issuedBy: answ.data.issuedBy
+                });
+            })
+            .catch((err) => {
+                console.log(err);
+            });
     }
 
     handleFormOnChange(e){
@@ -45,6 +69,12 @@ class Edit extends React.Component{
         this.setState({
             redirect: true
         })
+    }
+
+    handleCancelOnClick(e){
+        this.setState({
+            cancelRedirect: true
+        });
     }
 
     handleBlockDateOnChange(value){
@@ -60,6 +90,16 @@ class Edit extends React.Component{
     }
 
     render() {
+        const { successRedirect } = this.state;
+        if (successRedirect) {
+            return <Redirect to="/employees" push />
+        }
+
+        const { cancelRedirect } = this.state;
+        if (cancelRedirect) {
+            return <Redirect to="/employees" push />
+        }
+        
         return(
             <Grid>
                 <h2>Редактирование данных</h2>
@@ -126,7 +166,7 @@ class Edit extends React.Component{
                             </FormGroup>
                             <ButtonToolbar className="pull-right">
                                 <Button bsStyle="success" className="searchButton" onClick={ this.handleSaveOnClick }>Сохранить</Button>
-                                <Button bsStyle="danger" className="searchButton">Отмена</Button>
+                                <Button bsStyle="danger" className="searchButton" onClick={ this.handleCancelOnClick }>Отмена</Button>
                             </ButtonToolbar>
                         </Col>
                     </Row>  
