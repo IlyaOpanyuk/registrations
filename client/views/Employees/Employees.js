@@ -8,7 +8,6 @@ import Employee from './components/Employee';
 class EmployeeList extends React.Component{
     constructor(props){
         super(props);
-
         
     }
 

@@ -2,12 +2,30 @@ import React from 'react';
 import { Redirect, withRouter } from 'react-router-dom';
 import { Grid, Row, Col, Form, FormGroup, FormControl, ControlLabel, Button } from 'react-bootstrap';
 
-export default class Employee extends React.Component{
+class Employee extends React.Component{
     constructor(props){
         super(props);
+        this.state = {
+            redirect: false
+        }
+
+        this.handleEditOnClick = this.handleEditOnClick.bind(this); 
+    }
+
+    handleEditOnClick(e){
+        this.setState({
+            redirect: true
+        })
     }
 
     render(){
+        const { redirect } = this.state;
+        if (redirect) {
+            return <Redirect to={{
+                pathname: '/edit/' + 4//this.props.id
+            }} push />
+        }
+        
         return(
             <Grid>
                 <Form>
@@ -72,10 +90,7 @@ export default class Employee extends React.Component{
                                 <FormControl componentClass="label">{ this.props.blockDate }</FormControl>
                             </FormGroup>
                             <FormGroup>
-                                <Button bsStyle="info" className="pull-right" onClick={ () =>{
-                                        return(<Redirect to="/edit" push/>)
-                                    }
-                                 }>Редактировать</Button>
+                                <Button bsStyle="info" className="pull-right" onClick={ this.handleEditOnClick }>Редактировать</Button>
                             </FormGroup>
                         </Col>
                     </Row>
@@ -84,3 +99,5 @@ export default class Employee extends React.Component{
         )
     }
 }
+
+export default withRouter(Employee);

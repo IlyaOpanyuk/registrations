@@ -1,5 +1,5 @@
 import React from 'react';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Redirect } from 'react-router-dom';
 import { Grid, Row, Col, Form, FormGroup, FormControl, ControlLabel, Button } from 'react-bootstrap';
 import Alert from 'react-alert';
 import valid from '../../constants/valid';
@@ -19,7 +19,8 @@ class Home extends React.Component {
             codeValid: valid.default,
             pasportNumberValid: valid.default,
             personalNumberValid: valid.default,
-            error: null
+            error: null,
+            redirect: false
         };
 
         this.handleFormOnChange = this.handleFormOnChange.bind(this);
@@ -37,7 +38,16 @@ class Home extends React.Component {
 
     handleSearhOnClick(){
         if (this.validate()){
-            alert(123);
+            this.props.getDealer({
+                surname: this.state.surname,
+                phoneNumber: this.state.phoneNumber,
+                code: this.state.code,
+                pasportNumber: this.state.pasportNumber,
+                personalNumber: this.state.personalNumber
+            });
+            this.setState({
+                redirect: true
+            });
         }
     }
 
@@ -84,6 +94,11 @@ class Home extends React.Component {
     }
 
     render(){
+        const { redirect } = this.state;
+        if (redirect) {
+            return <Redirect to="/employees" push />
+        }
+
         return(
             <Grid>
                 <h2>Форма поиска</h2>

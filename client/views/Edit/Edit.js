@@ -1,5 +1,5 @@
 import React from 'react';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Redirect } from 'react-router-dom';
 import { Grid, Row, Col, Form, FormGroup, FormControl, ControlLabel, Button, Checkbox, ButtonToolbar } from 'react-bootstrap';
 import DatePicker from 'react-bootstrap-date-picker'
 import valid from '../../constants/valid';
@@ -13,7 +13,7 @@ class Edit extends React.Component{
             name: '',
             patronymic: '',
             series: '',
-            pasportNumber: '',
+            documentNumber: '',
             issueDate: new Date().toISOString(),
             phoneNumber: '',
             attestation: false,
@@ -22,7 +22,7 @@ class Edit extends React.Component{
             surnameValid: valid.default,
             nameValid: valid.default,
             patronymicValid: valid.default,
-            pasportNumberValid: valid.default,
+            documentNumberValid: valid.default,
             phoneNumberValid: valid.default,
             issuedByValid: valid.default,
             error: null
@@ -32,6 +32,7 @@ class Edit extends React.Component{
         this.handleSaveOnClick = this.handleSaveOnClick.bind(this);
         this.handleBlockDateOnChange = this.handleBlockDateOnChange.bind(this);
         this.handleIssuedDateOnChange = this.handleIssuedDateOnChange.bind(this);
+        alert(this.props.match.params.id);
     }
 
     handleFormOnChange(e){
@@ -41,7 +42,9 @@ class Edit extends React.Component{
     }
 
     handleSaveOnClick(e){
-        alert(this.state.blockDate);
+        this.setState({
+            redirect: true
+        })
     }
 
     handleBlockDateOnChange(value){
@@ -56,7 +59,7 @@ class Edit extends React.Component{
         })
     }
 
-    render(){
+    render() {
         return(
             <Grid>
                 <h2>Редактирование данных</h2>
@@ -88,7 +91,7 @@ class Edit extends React.Component{
                                     <option value="PP">PP</option>
                                 </FormControl>
                             </FormGroup>
-                            <FormGroup controlId="pasportNumber" validationState={ this.state.pasportNumberValid }>
+                            <FormGroup controlId="documentNumber" validationState={ this.state.documentNumberValid }>
                                 <ControlLabel>Номер паспорта</ControlLabel>
                                 <FormControl type="text" placeholder="Введите номер паспорта"/>
                             </FormGroup>
