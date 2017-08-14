@@ -10,6 +10,7 @@ class Edit extends React.Component{
     constructor(props){
         super(props);
         this.state = {
+            id: this.props.match.params.id,
             surname: '',
             name: '',
             patronymic: '',
@@ -36,22 +37,24 @@ class Edit extends React.Component{
         this.handleBlockDateOnChange = this.handleBlockDateOnChange.bind(this);
         this.handleIssuedDateOnChange = this.handleIssuedDateOnChange.bind(this);
         this.handleCancelOnClick = this.handleCancelOnClick.bind(this);
+        this.commitChanges = this.commitChanges.bind(this);
+        this.handleSeriesOnChange = this.handleSeriesOnChange.bind(this);
     }
 
-    componentDidMount(){
-        axios.get('http://10.254.5.71:8084/api/dealers/' + this.props.match.params.id)
+    componentDidMount() { 
+        axios.get('http://10.254.5.71:8084/api/dealers/' + this.state.id + '/dealers')
             .then((answ) => {
                 this.setState({
-                    surname: answ.data.surname,
-                    name: answ.data.name,
-                    patronymic: answ.data.patronymic,
-                    series: answ.data.series,
-                    documentNumber: answ.data.documentNumber,
-                    issueDate: answ.data.issueDate,
-                    phoneNumber: answ.data.phoneNumber,
-                    attestation: answ.data.attestation,
-                    blockDate: answ.data.blockDate,
-                    issuedBy: answ.data.issuedBy
+                    surname: answ.data[0].surname,
+                    name: answ.data[0].name,
+                    patronymic: answ.data[0].patronymic,
+                    series: answ.data[0].series,
+                    documentNumber: answ.data[0].documentNumber,
+                    issueDate: answ.data[0].issueDate,
+                    phoneNumber: answ.data[0].phoneNumber,
+                    attestation: answ.data[0].attestation,
+                    blockDate: answ.data[0].blockDate,
+                    issuedBy: answ.data[0].issuedBy
                 });
             })
             .catch((err) => {
@@ -66,9 +69,10 @@ class Edit extends React.Component{
     }
 
     handleSaveOnClick(e){
+        this.commitChanges();
         this.setState({
-            redirect: true
-        })
+            successRedirect: true
+        });
     }
 
     handleCancelOnClick(e){
@@ -80,7 +84,7 @@ class Edit extends React.Component{
     handleBlockDateOnChange(value){
         this.setState({
             blockDate: value
-        })
+        });
     } 
 
     handleIssuedDateOnChange(value){
@@ -89,9 +93,46 @@ class Edit extends React.Component{
         })
     }
 
+    commitChanges(){
+        axios({
+            method: 'post',
+            url: 'http://10.254.5.71:8084/api/dealers/',
+            data: JSON.stringify({ 
+                ID: this.state.id,
+                Surname: this.state.surname,
+                Name: this.state.name,
+                Patronymic: this.state.patronymic,
+                Series: this.state.series,
+                DocumentNumber: this.state.documentNumber,
+                IssueDate: this.state.issueDate,
+                PhoneNumber: this.state.phoneNumber,
+                Attestation: this.state.attestation,
+                BlockDate: this.state.blockDate,
+                IssuedBy: this.state.issuedBy,
+                posted: false
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((resp) => {
+            console.log('Success' + resp);
+            this.setState({
+                posted: true
+            });
+        }).catch((err) => {
+            console.log('Error: ' + err);
+        });
+    }
+
+    handleSeriesOnChange(e){
+        this.setState({
+            series: e.target.value
+        });
+    }
+
     render() {
-        const { successRedirect } = this.state;
-        if (successRedirect) {
+        const { successRedirect, posted } = this.state;
+        if (successRedirect & posted) {
             return <Redirect to="/employees" push />
         }
 
@@ -108,19 +149,19 @@ class Edit extends React.Component{
                         <Col md={6} sm={3}>
                             <FormGroup controlId="surname" validationState={ this.state.surnameValid }>
                                 <ControlLabel>Фамилия</ControlLabel>
-                                <FormControl type="text" placeholder="Введите фамилию"/>
+                                <FormControl value={ this.state.surname } type="text" placeholder="Введите фамилию"/>
                             </FormGroup>
                             <FormGroup controlId="name" validationState={ this.state.nameValid }>
                                 <ControlLabel>Имя</ControlLabel>
-                                <FormControl type="text" placeholder="Введите имя"/>
+                                <FormControl value={ this.state.name } type="text" placeholder="Введите имя"/>
                             </FormGroup>
                             <FormGroup controlId="patronymic" validationState={ this.state.patronymicValid }>
                                 <ControlLabel>Отчество</ControlLabel>
-                                <FormControl type="text" placeholder="Введите отчество"/>
+                                <FormControl value={ this.state.patronymic } type="text" placeholder="Введите отчество"/>
                             </FormGroup>
                             <FormGroup controlId="series" validationState={ this.state.seriesValid }>
                                 <ControlLabel>Серия</ControlLabel>
-                                <FormControl componentClass="select" placeholder="Выберите серию паспорта">
+                                <FormControl componentClass="select" placeholder="Выберите серию паспорта" value={ this.state.series } onChange={ this.handleSeriesOnChange }>
                                     <option value="AB">AB</option>
                                     <option value="BM">BM</option>
                                     <option value="HB">HB</option>
@@ -133,7 +174,7 @@ class Edit extends React.Component{
                             </FormGroup>
                             <FormGroup controlId="documentNumber" validationState={ this.state.documentNumberValid }>
                                 <ControlLabel>Номер паспорта</ControlLabel>
-                                <FormControl type="text" placeholder="Введите номер паспорта"/>
+                                <FormControl value={ this.state.documentNumber } type="text" placeholder="Введите номер паспорта"/>
                             </FormGroup>
                             <FormGroup>
                                 <Col sm={9}>
@@ -148,12 +189,12 @@ class Edit extends React.Component{
                             </FormGroup>
                             <FormGroup controlId="phoneNumber" validationState={ this.state.phoneNumberValid }>
                                 <ControlLabel>Номер телефона</ControlLabel>
-                                <FormControl type="text" placeholder="Введите номер телефона"/>
+                                <FormControl value={ this.state.phoneNumber } type="text" placeholder="Введите номер телефона"/>
                             </FormGroup>
                             <FormGroup controlId="attestation">
                                 <ControlLabel>Аттестация</ControlLabel>
                                 <Checkbox>  
-                                    { this.props.date ? this.props.date : new Date().toLocaleDateString() }
+                                    { this.state.attestation ? new Date(this.state.attestation).toLocaleDateString() : new Date().toLocaleDateString() }
                                 </Checkbox>
                             </FormGroup>
                             <FormGroup controlId="blockDate" className="checkboxMargin" >
@@ -162,7 +203,7 @@ class Edit extends React.Component{
                             </FormGroup>
                             <FormGroup controlId="issuedBy" validationState={ this.state.issuedByValid }>
                                 <ControlLabel>Кем выдан</ControlLabel>
-                                <FormControl type="text" placeholder="Введите организацию, выдавшую документ"/>
+                                <FormControl value={ this.state.issuedBy } type="text" placeholder="Введите организацию, выдавшую документ"/>
                             </FormGroup>
                             <ButtonToolbar className="pull-right">
                                 <Button bsStyle="success" className="searchButton" onClick={ this.handleSaveOnClick }>Сохранить</Button>

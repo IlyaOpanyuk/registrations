@@ -85,7 +85,7 @@ class Employee extends React.Component{
                             </FormGroup>
                             <FormGroup>
                                 <ControlLabel>Аттестация</ControlLabel>
-                                <FormControl componentClass="label">{ this.props.attestation }</FormControl>
+                                <FormControl componentClass="label">{ new Date(this.props.attestation).toLocaleDateString() }</FormControl>
                             </FormGroup>
                             <FormGroup>
                                 <ControlLabel>Блокировка доступа</ControlLabel>

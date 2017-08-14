@@ -40,7 +40,7 @@ class Home extends React.Component {
         if (this.validate()){
             this.props.getDealer({
                 surname: this.state.surname,
-                phoneNumber: this.state.phoneNumber,
+                phoneNumber: this.state.phoneNumber.replace(/\s/g,''),
                 code: this.state.code,
                 pasportNumber: this.state.pasportNumber,
                 personalNumber: this.state.personalNumber
