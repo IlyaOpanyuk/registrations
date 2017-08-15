@@ -1,8 +1,9 @@
 import React from 'react';
 import { withRouter, Redirect } from 'react-router-dom';
 import { Grid, Row, Col, Form, FormGroup, FormControl, ControlLabel, Button, Checkbox, ButtonToolbar } from 'react-bootstrap';
-import DatePicker from 'react-bootstrap-date-picker'
+import DatePicker from 'react-bootstrap-date-picker';
 import valid from '../../constants/valid';
+import validControl from '../../constants/validControl';
 import axios from 'axios';
 import './edit.scss';
 
@@ -18,18 +19,24 @@ class Edit extends React.Component{
             documentNumber: '',
             issueDate: new Date().toISOString(),
             phoneNumber: '',
-            attestation: false,
+            attestation: '',
             blockDate: new Date().toISOString(),
             issuedBy: '',
             surnameValid: valid.default,
             nameValid: valid.default,
             patronymicValid: valid.default,
             documentNumberValid: valid.default,
+            issueDateValid: valid.default,
             phoneNumberValid: valid.default,
             issuedByValid: valid.default,
             error: null,
             successRedirect: false,
-            cancelRedirect: false
+            cancelRedirect: false,
+            posted: false,
+            checkboxOptions: {
+                checked: false,
+                disabled: false
+            }
         };
 
         this.handleFormOnChange = this.handleFormOnChange.bind(this);
@@ -39,6 +46,9 @@ class Edit extends React.Component{
         this.handleCancelOnClick = this.handleCancelOnClick.bind(this);
         this.commitChanges = this.commitChanges.bind(this);
         this.handleSeriesOnChange = this.handleSeriesOnChange.bind(this);
+        this.validate = this.validate.bind(this);
+        this.validateControl = this.validateControl.bind(this);
+        this.handleAttestationOnChange = this.handleAttestationOnChange.bind(this);
     }
 
     componentDidMount() { 
@@ -50,11 +60,15 @@ class Edit extends React.Component{
                     patronymic: answ.data[0].patronymic,
                     series: answ.data[0].series,
                     documentNumber: answ.data[0].documentNumber,
-                    issueDate: answ.data[0].issueDate,
+                    issueDate: answ.data[0].issueDate ? new Date(answ.data[0].issueDate).toISOString() : '',
                     phoneNumber: answ.data[0].phoneNumber,
                     attestation: answ.data[0].attestation,
-                    blockDate: answ.data[0].blockDate,
-                    issuedBy: answ.data[0].issuedBy
+                    blockDate: answ.data[0].blockDate ? new Date(answ.data[0].blockDate).toISOString() : '',
+                    issuedBy: answ.data[0].issuedBy,
+                    checkboxOptions: {
+                        checked: answ.data[0].attestation ? true : false,
+                        disabled: answ.data[0].attestation ? true : false,
+                    }
                 });
             })
             .catch((err) => {
@@ -69,10 +83,12 @@ class Edit extends React.Component{
     }
 
     handleSaveOnClick(e){
-        this.commitChanges();
-        this.setState({
-            successRedirect: true
-        });
+        if (this.validate()){
+            this.commitChanges();
+            this.setState({
+                successRedirect: true
+            });
+        }
     }
 
     handleCancelOnClick(e){
@@ -90,7 +106,22 @@ class Edit extends React.Component{
     handleIssuedDateOnChange(value){
         this.setState({
             issueDate: value
-        })
+        });
+    }
+
+    handleSeriesOnChange(e){
+        this.setState({
+            series: e.target.value
+        });
+    }
+
+    handleAttestationOnChange(e){
+        this.setState({
+            attestation: this.state.attestation ? '' : new Date().toLocaleDateString(),
+            checkboxOptions : {
+                checked: this.state.checkboxOptions.checked ? false : true
+            }
+        });
     }
 
     commitChanges(){
@@ -98,18 +129,17 @@ class Edit extends React.Component{
             method: 'post',
             url: 'http://10.254.5.71:8084/api/dealers/',
             data: JSON.stringify({ 
-                ID: this.state.id,
-                Surname: this.state.surname,
-                Name: this.state.name,
-                Patronymic: this.state.patronymic,
-                Series: this.state.series,
-                DocumentNumber: this.state.documentNumber,
-                IssueDate: this.state.issueDate,
-                PhoneNumber: this.state.phoneNumber,
-                Attestation: this.state.attestation,
-                BlockDate: this.state.blockDate,
-                IssuedBy: this.state.issuedBy,
-                posted: false
+                id: this.state.id,
+                surname: this.state.surname,
+                name: this.state.name,
+                patronymic: this.state.patronymic,
+                series: this.state.series,
+                documentNumber: this.state.documentNumber,
+                issueDate: this.state.issueDate,
+                phoneNumber: this.state.phoneNumber,
+                attestation: this.state.attestation,
+                blockDate: this.state.blockDate,
+                issuedBy: this.state.issuedBy,
             }),
             headers: {
                 'Content-Type': 'application/json'
@@ -124,21 +154,67 @@ class Edit extends React.Component{
         });
     }
 
-    handleSeriesOnChange(e){
+    validate(){
+        let err = {
+            surnameValid: valid.default,
+            nameValid: valid.default,
+            patronymicValid: valid.default,
+            documentNumberValid: valid.default,
+            issueDateValid: valid.default,
+            phoneNumberValid: valid.default,
+            issuedByValid: valid.default,
+            error: ''
+        };
+        let check = true;
+
+        if (!this.state.surname & !this.state.name & !this.state.patronymic & !this.state.documentNumber & !this.state.issueDate & !this.state.phoneNumber & !this.state.issuedBy) {
+            err.surnameValid = valid.warning;
+            err.nameValid = valid.warning;
+            err.patronymicValid = valid.warning;
+            err.documentNumberValid = valid.warning;
+            err.issueDateValid = valid.warning;
+            err.phoneNumberValid = valid.warning;
+            err.issuedByValid = valid.warning; 
+            err.error = "Заполните обязательные поля!";
+            check = false;
+        }
+
+        check = check & this.validateControl(validControl.surnameValid, err, this.state.surname, /([а-яА-Я]{1,})/, "");
+        check = check & this.validateControl(validControl.nameValid, err, this.state.name, /([а-яА-Я]{1,})$/, "");
+        check = check & this.validateControl(validControl.patronymicValid, err, this.state.patronymic, /([а-яА-Я]{1,})$/, "");
+        check = check & this.validateControl(validControl.documentNumberValid, err, this.state.documentNumber, /^\d{7}$/, "Введите корректный номер документа\n");
+        check = check & this.validateControl(validControl.issueDateValid, err, new Date(this.state.issueDate).toLocaleDateString(), /(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d/, "");
+        check = check & this.validateControl(validControl.phoneNumberValid, err, this.state.phoneNumber, /^\d{3}[ ]\d{2}[ ]\d{7}$/, "Введите корректный номер телефона в формате 375 XX XXXXXX");
+        check = check & this.validateControl(validControl.issuedByValid, err, this.state.issuedBy, /([а-яА-Я]{1,})$/, "");
+
+        this.setState(err);
+        return check;
+    }
+
+    validateControl(validControl, err, controlValue, regexp, errText){
+        if (controlValue !== null && !regexp.test(controlValue)){
+            err[validControl] = valid.error;
+            err.error += errText;
+            return false;
+        }
+        return true;
+    }
+
+    onChange(date) {
         this.setState({
-            series: e.target.value
+            value: date
         });
     }
 
     render() {
-        const { successRedirect, posted } = this.state;
+        const { successRedirect, posted, checkboxOptions } = this.state;
         if (successRedirect & posted) {
-            return <Redirect to="/employees" push />
+            return <Redirect to="/employees" />
         }
 
         const { cancelRedirect } = this.state;
         if (cancelRedirect) {
-            return <Redirect to="/employees" push />
+            return <Redirect to="/employees" />
         }
         
         return(
@@ -146,7 +222,7 @@ class Edit extends React.Component{
                 <h2>Редактирование данных</h2>
                 <Form onChange={ this.handleFormOnChange }>
                     <Row>
-                        <Col md={6} sm={3}>
+                        <Col md={6} sm={6}>
                             <FormGroup controlId="surname" validationState={ this.state.surnameValid }>
                                 <ControlLabel>Фамилия</ControlLabel>
                                 <FormControl value={ this.state.surname } type="text" placeholder="Введите фамилию"/>
@@ -173,33 +249,43 @@ class Edit extends React.Component{
                                 </FormControl>
                             </FormGroup>
                             <FormGroup controlId="documentNumber" validationState={ this.state.documentNumberValid }>
-                                <ControlLabel>Номер паспорта</ControlLabel>
-                                <FormControl value={ this.state.documentNumber } type="text" placeholder="Введите номер паспорта"/>
+                                <ControlLabel>Номер документа</ControlLabel>
+                                <FormControl value={ this.state.documentNumber } type="text" placeholder="Введите номер документа" maxLength={7}/>
                             </FormGroup>
                             <FormGroup>
-                                <Col sm={9}>
-                                    <p className="error">{ this.state.error }</p>
+                                <Col sm={12}>
+                                    <p>
+                                        { 
+                                            this.state.error ? 
+                                                this.state.error.split('\n').map((item, key) => {
+                                                    return <span key={key}>{item}<br/></span>
+                                                }) : ''
+                                        }
+                                    </p>
                                 </Col>
                             </FormGroup>
                         </Col>
-                        <Col md={6} sm={3}>
-                            <FormGroup controlId="issueDate">
+                        <Col md={6} sm={6}>
+                            <FormGroup validationState={ this.state.issueDateValid }>
                                 <ControlLabel>Дата выдачи</ControlLabel>
-                                <DatePicker value={ this.state.issueDate } onChange={ this.handleIssuedDateOnChange }/>
+                                <DatePicker dateFormat="DD/MM/YYYY" value={ this.state.issueDate } onChange={ this.handleIssuedDateOnChange } />
                             </FormGroup>
                             <FormGroup controlId="phoneNumber" validationState={ this.state.phoneNumberValid }>
                                 <ControlLabel>Номер телефона</ControlLabel>
-                                <FormControl value={ this.state.phoneNumber } type="text" placeholder="Введите номер телефона"/>
+                                <FormControl value={ this.state.phoneNumber } type="text" placeholder="Введите номер телефона" maxLength={14}/>
                             </FormGroup>
                             <FormGroup controlId="attestation">
                                 <ControlLabel>Аттестация</ControlLabel>
-                                <Checkbox>  
+                                <Checkbox 
+                                    checked={ checkboxOptions.checked } 
+                                    disabled={ checkboxOptions.disabled } 
+                                    onChange={ this.handleAttestationOnChange }>  
                                     { this.state.attestation ? new Date(this.state.attestation).toLocaleDateString() : new Date().toLocaleDateString() }
                                 </Checkbox>
                             </FormGroup>
-                            <FormGroup controlId="blockDate" className="checkboxMargin" >
+                            <FormGroup className="checkboxMargin" >
                                 <ControlLabel>Блокировка доступа</ControlLabel>
-                                <DatePicker value={ this.state.blockDate } onChange={ this.handleBlockDateOnChange }/>
+                                <DatePicker value={ this.state.blockDate } onChange={ this.handleBlockDateOnChange.bind(this) } />
                             </FormGroup>
                             <FormGroup controlId="issuedBy" validationState={ this.state.issuedByValid }>
                                 <ControlLabel>Кем выдан</ControlLabel>

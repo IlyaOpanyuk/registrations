@@ -35,6 +35,7 @@
     "html-webpack-plugin": "^2.29.0",
     "react-alert": "^2.2.0",
     "react-bootstrap-date-picker": "^5.1.0",
+    "react-datepicker": "^0.53.0",
     "react-hot-loader": "^3.0.0-beta.7",
     "resolve-url-loader": "^2.1.0",
     "sass-loader": "^6.0.6",

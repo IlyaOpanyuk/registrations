@@ -25,14 +25,14 @@ class Employee extends React.Component{
         if (redirect) {
             return <Redirect to={{
                 pathname: '/edit/' + this.props.id
-            }} push />
+            }} />
         }
         
         return(
             <Grid>
                 <Form>
                     <Row>
-                        <Col sm={6}>
+                        <Col md={6} sm={6}>
                             <FormGroup >
                                 <ControlLabel>ID сотрудника</ControlLabel>
                                 <FormControl componentClass="label">{ this.props.id }</FormControl>
@@ -55,17 +55,17 @@ class Employee extends React.Component{
                             </FormGroup>
                             <FormGroup>
                                 <ControlLabel>Дата рождения</ControlLabel>
-                                <FormControl componentClass="label">{ new Date(this.props.birthDate).toLocaleDateString() }</FormControl>
+                                <FormControl componentClass="label">{ this.props.birthDate ? new Date(this.props.birthDate).toLocaleDateString() : '-' }</FormControl>
                             </FormGroup>
                             <FormGroup>
                                 <ControlLabel>Тип документа</ControlLabel>
                                 <FormControl componentClass="label">{ this.props.documentType }</FormControl>
                             </FormGroup>
                         </Col>
-                        <Col sm={6}>
+                        <Col md={6} sm={6}>
                             <FormGroup>
                                 <ControlLabel>Дата выдачи</ControlLabel>
-                                <FormControl componentClass="label">{ new Date(this.props.issueDate).toLocaleDateString() }</FormControl>
+                                <FormControl componentClass="label">{ this.props.issueDate ? new Date(this.props.issueDate).toLocaleDateString() : '-' }</FormControl>
                             </FormGroup>
                             <FormGroup>
                                 <ControlLabel>Кем выдан</ControlLabel>
@@ -85,7 +85,7 @@ class Employee extends React.Component{
                             </FormGroup>
                             <FormGroup>
                                 <ControlLabel>Аттестация</ControlLabel>
-                                <FormControl componentClass="label">{ new Date(this.props.attestation).toLocaleDateString() }</FormControl>
+                                <FormControl componentClass="label">{ this.props.attestation ? new Date(this.props.attestation).toLocaleDateString() : '-' }</FormControl>
                             </FormGroup>
                             <FormGroup>
                                 <ControlLabel>Блокировка доступа</ControlLabel>

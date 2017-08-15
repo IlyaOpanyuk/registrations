@@ -1,8 +1,8 @@
 import React from 'react';
 import { withRouter, Redirect } from 'react-router-dom';
 import { Grid, Row, Col, Form, FormGroup, FormControl, ControlLabel, Button } from 'react-bootstrap';
-import Alert from 'react-alert';
 import valid from '../../constants/valid';
+import validControl from '../../constants/validControl';
 import './home.scss';
 
 class Home extends React.Component {
@@ -12,12 +12,12 @@ class Home extends React.Component {
             surname: '',
             phoneNumber: '',
             code: '',
-            pasportNumber: '',
+            documentNumber: '',
             personalNumber: '',
             surnameValid: valid.default,
             phoneNumberValid: valid.default,
             codeValid: valid.default,
-            pasportNumberValid: valid.default,
+            documentNumberValid: valid.default,
             personalNumberValid: valid.default,
             error: null,
             redirect: false
@@ -40,9 +40,9 @@ class Home extends React.Component {
         if (this.validate()){
             this.props.getDealer({
                 surname: this.state.surname,
-                phoneNumber: this.state.phoneNumber.replace(/\s/g,''),
+                phoneNumber: this.state.phoneNumber,
                 code: this.state.code,
-                pasportNumber: this.state.pasportNumber,
+                documentNumber: this.state.documentNumber,
                 personalNumber: this.state.personalNumber
             });
             this.setState({
@@ -60,32 +60,32 @@ class Home extends React.Component {
             surnameValid: valid.default,
             phoneNumberValid: valid.default,
             codeValid: valid.default,
-            pasportNumberValid: valid.default,
+            documentNumberValid: valid.default,
             personalNumberValid: valid.default,
             error: ''
         };
         let check = true;
 
-        if (!this.state.surname & !this.state.phoneNumber & !this.state.code & !this.state.pasportNumber & !this.state.personalNumber) {
+        if (!this.state.surname & !this.state.phoneNumber & !this.state.code & !this.state.documentNumber & !this.state.personalNumber) {
             err.surnameValid = valid.warning;
             err.phoneNumberValid = valid.warning;
             err.codeValid = valid.warning;
-            err.pasportNumberValid = valid.warning;
+            err.documentNumberValid = valid.warning;
             err.personalNumberValid = valid.warning;
             err.error = "Необходимо ввести минимум один критерий для поиска";
             check = false;
         }
         
-        check = check & this.validateControl('phoneNumberValid', err, this.state.phoneNumber, /^\d{3}[ ]\d{2}[ ]\d{7}$/, "Введите корректный номер телефона");
-        check = check & this.validateControl('pasportNumberValid', err, this.state.pasportNumber, /^\d{7}$/, "Введите корректный номер паспорта");
-        check = check & this.validateControl('personalNumberValid', err, this.state.personalNumber, /^\d{7}[A-Z]\d{3}[A-Z]{2}\d{1}$/, "Введите корректный личный номер");
+        check = check & this.validateControl(validControl.phoneNumberValid, err, this.state.phoneNumber, /^\d{3}[ ]\d{2}[ ]\d{7}$/, "Введите корректный номер телефона в формате 375 XX XXXXXX\n");
+        check = check & this.validateControl(validControl.documentNumberValid, err, this.state.documentNumber, /^\d{7}$/, "Введите корректный номер документа\n");
+        check = check & this.validateControl(validControl.personalNumberValid, err, this.state.personalNumber, /^\d{7}[A-Z]\d{3}[A-Z]{2}\d{1}$/, "Введите корректный личный номер");
 
         this.setState(err);
         return check;
     }
 
-    validateControl(validControl, err, control, regexp, errText){
-        if (control && !regexp.test(control)){
+    validateControl(validControl, err, controlValue, regexp, errText){
+        if (controlValue && !regexp.test(controlValue)){
             err[validControl] = valid.error;
             err.error += errText;
             return false;
@@ -104,7 +104,7 @@ class Home extends React.Component {
                 <h2>Форма поиска</h2>
                 <Form onChange={this.handleFormOnChange}>
                     <Row>
-                        <Col md={6} sm={3}>
+                        <Col md={6} sm={6}>
                             <FormGroup controlId="surname" validationState={ this.state.surnameValid }>
                                 <ControlLabel>Фамилия</ControlLabel>
                                 <FormControl type="text" placeholder="Введите фамилию"/>
@@ -118,15 +118,22 @@ class Home extends React.Component {
                                 <FormControl type="text" placeholder="Введите код точки (ППО)"/>
                             </FormGroup>
                             <FormGroup>
-                                <Col sm={9}>
-                                    <p>{ this.state.error }</p>
+                                <Col sm={12}>
+                                    <p>
+                                        { 
+                                            this.state.error ? 
+                                                this.state.error.split('\n').map((item, key) => {
+                                                    return <span key={key}>{item}<br/></span>
+                                                }) : ''
+                                        }
+                                    </p>
                                 </Col>
                             </FormGroup>
                         </Col>
-                        <Col md={6} sm={3}>
-                            <FormGroup controlId="pasportNumber" validationState={ this.state.pasportNumberValid }>
-                                <ControlLabel>Номер паспорта</ControlLabel>
-                                <FormControl type="text" placeholder="Введите номер паспорта" maxLength={7}/>
+                        <Col md={6} sm={6}>
+                            <FormGroup controlId="documentNumber" validationState={ this.state.documentNumberValid }>
+                                <ControlLabel>Номер документа</ControlLabel>
+                                <FormControl type="text" placeholder="Введите номер документа" maxLength={7}/>
                             </FormGroup>
                             <FormGroup controlId="personalNumber" validationState={ this.state.personalNumberValid }>
                                 <ControlLabel>Личный номер</ControlLabel>
