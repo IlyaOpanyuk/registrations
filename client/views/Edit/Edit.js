@@ -19,7 +19,7 @@ class Edit extends React.Component{
             documentNumber: '',
             issueDate: new Date().toISOString(),
             phoneNumber: '',
-            attestation: '',
+            attestation: new Date().toISOString(),
             blockDate: new Date().toISOString(),
             issuedBy: '',
             surnameValid: valid.default,
@@ -62,7 +62,7 @@ class Edit extends React.Component{
                     documentNumber: answ.data[0].documentNumber,
                     issueDate: answ.data[0].issueDate ? new Date(answ.data[0].issueDate).toISOString() : '',
                     phoneNumber: answ.data[0].phoneNumber,
-                    attestation: answ.data[0].attestation,
+                    attestation: answ.data[0].attestation === null ? new Date().toISOString() : new Date(answ.data[0].attestation).toISOString(),
                     blockDate: answ.data[0].blockDate ? new Date(answ.data[0].blockDate).toISOString() : '',
                     issuedBy: answ.data[0].issuedBy,
                     checkboxOptions: {
@@ -117,7 +117,6 @@ class Edit extends React.Component{
 
     handleAttestationOnChange(e){
         this.setState({
-            attestation: this.state.attestation ? '' : new Date().toLocaleDateString(),
             checkboxOptions : {
                 checked: this.state.checkboxOptions.checked ? false : true
             }
@@ -179,12 +178,12 @@ class Edit extends React.Component{
             check = false;
         }
 
-        check = check & this.validateControl(validControl.surnameValid, err, this.state.surname, /([а-яА-Я]{1,})/, "");
-        check = check & this.validateControl(validControl.nameValid, err, this.state.name, /([а-яА-Я]{1,})$/, "");
-        check = check & this.validateControl(validControl.patronymicValid, err, this.state.patronymic, /([а-яА-Я]{1,})$/, "");
+        check = check & this.validateControl(validControl.surnameValid, err, this.state.surname, /([а-яА-Яa-zA-Z]{1,})/, "");
+        check = check & this.validateControl(validControl.nameValid, err, this.state.name, /([а-яА-Яa-zA-Z]{1,})$/, "");
+        check = check & this.validateControl(validControl.patronymicValid, err, this.state.patronymic, /([а-яА-Яa-zA-Z]{1,})$/, "");
         check = check & this.validateControl(validControl.documentNumberValid, err, this.state.documentNumber, /^\d{7}$/, "Введите корректный номер документа\n");
-        check = check & this.validateControl(validControl.issueDateValid, err, new Date(this.state.issueDate).toLocaleDateString(), /(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d/, "");
-        check = check & this.validateControl(validControl.phoneNumberValid, err, this.state.phoneNumber, /^\d{3}[ ]\d{2}[ ]\d{7}$/, "Введите корректный номер телефона в формате 375 XX XXXXXX");
+        check = check & this.validateControl(validControl.issueDateValid, err, new Date(this.state.issueDate).toLocaleDateString('en-GB'), /(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d/, "");
+        check = check & this.validateControl(validControl.phoneNumberValid, err, this.state.phoneNumber, /^\d{12}$/, "Введите корректный номер телефона в формате 375XXXXXXXX");
         check = check & this.validateControl(validControl.issuedByValid, err, this.state.issuedBy, /([а-яА-Я]{1,})$/, "");
 
         this.setState(err);
@@ -272,7 +271,7 @@ class Edit extends React.Component{
                             </FormGroup>
                             <FormGroup controlId="phoneNumber" validationState={ this.state.phoneNumberValid }>
                                 <ControlLabel>Номер телефона</ControlLabel>
-                                <FormControl value={ this.state.phoneNumber } type="text" placeholder="Введите номер телефона" maxLength={14}/>
+                                <FormControl value={ this.state.phoneNumber } type="text" placeholder="Введите номер телефона" maxLength={12}/>
                             </FormGroup>
                             <FormGroup controlId="attestation">
                                 <ControlLabel>Аттестация</ControlLabel>
@@ -280,12 +279,12 @@ class Edit extends React.Component{
                                     checked={ checkboxOptions.checked } 
                                     disabled={ checkboxOptions.disabled } 
                                     onChange={ this.handleAttestationOnChange }>  
-                                    { this.state.attestation ? new Date(this.state.attestation).toLocaleDateString() : new Date().toLocaleDateString() }
+                                    { new Date(this.state.attestation).toLocaleDateString('en-GB') }
                                 </Checkbox>
                             </FormGroup>
                             <FormGroup className="checkboxMargin" >
                                 <ControlLabel>Блокировка доступа</ControlLabel>
-                                <DatePicker value={ this.state.blockDate } onChange={ this.handleBlockDateOnChange.bind(this) } />
+                                <DatePicker dateFormat="DD/MM/YYYY" value={ this.state.blockDate } onChange={ this.handleBlockDateOnChange.bind(this) } />
                             </FormGroup>
                             <FormGroup controlId="issuedBy" validationState={ this.state.issuedByValid }>
                                 <ControlLabel>Кем выдан</ControlLabel>

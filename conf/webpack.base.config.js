@@ -2,7 +2,7 @@ import Config from 'webpack-config';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 
 export default new Config().merge({
-  entry: './client/index.js',
+  entry: ['babel-polyfill', './client/index.js'],
   output: {
     path: __dirname + '/../server/public',
   },

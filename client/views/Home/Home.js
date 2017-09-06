@@ -76,7 +76,7 @@ class Home extends React.Component {
             check = false;
         }
         
-        check = check & this.validateControl(validControl.phoneNumberValid, err, this.state.phoneNumber, /^\d{3}[ ]\d{2}[ ]\d{7}$/, "Введите корректный номер телефона в формате 375 XX XXXXXX\n");
+        check = check & this.validateControl(validControl.phoneNumberValid, err, this.state.phoneNumber, /^\d{12}$/, "Введите корректный номер телефона в формате 375XXXXXXXX\n");
         check = check & this.validateControl(validControl.documentNumberValid, err, this.state.documentNumber, /^\d{7}$/, "Введите корректный номер документа\n");
         check = check & this.validateControl(validControl.personalNumberValid, err, this.state.personalNumber, /^\d{7}[A-Z]\d{3}[A-Z]{2}\d{1}$/, "Введите корректный личный номер");
 
@@ -111,11 +111,7 @@ class Home extends React.Component {
                             </FormGroup>
                             <FormGroup controlId="phoneNumber" validationState={ this.state.phoneNumberValid }>
                                 <ControlLabel>Номер телефона</ControlLabel>
-                                <FormControl type="text" placeholder="Введите номер телефона" maxLength={14}/>
-                            </FormGroup>
-                            <FormGroup controlId="code" validationState={ this.state.codeValid }>
-                                <ControlLabel>Код точки (ППО)</ControlLabel>
-                                <FormControl type="text" placeholder="Введите код точки (ППО)"/>
+                                <FormControl type="text" placeholder="Введите номер телефона" maxLength={12}/>
                             </FormGroup>
                             <FormGroup>
                                 <Col sm={12}>
@@ -149,3 +145,11 @@ class Home extends React.Component {
 }
 
 export default withRouter(Home);
+
+/*
+Временно недоступный функционал
+<FormGroup controlId="code" validationState={ this.state.codeValid }>
+    <ControlLabel>Код точки (ППО)</ControlLabel>
+    <FormControl type="text" placeholder="Введите код точки (ППО)"/>
+</FormGroup>
+*/

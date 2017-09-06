@@ -1,4 +1,5 @@
 import React from 'react';
+import 'babel-polyfill';
 import { AppContainer } from 'react-hot-loader';
 import ReactDOM from 'react-dom';
 import Routes from './routes/Routes';
